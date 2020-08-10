@@ -1,0 +1,76 @@
+extends layout
+
+block content
+  div(class="container")
+    h1 Add
+    div()
+      div(class="form-group row")
+        label(class="col-sm-2 col-form-label") Name
+        div(class="col-sm-4")
+          input(id="name", class="form-control", type="text")
+      div(class="form-group row")
+        label(class="col-sm-2 col-form-label") reps
+        div(class="col-sm-4")
+          input(id="reps", class="form-control", type="text")
+      div(class="form-group row")
+        label(class="col-sm-2 col-form-label") weight
+        div(class="col-sm-4")
+          input(id="weight", class="form-control", type="text")
+      div(class="form-group row")
+        label(class="col-sm-2 col-form-label") date
+        div(class="col-sm-4")
+          input(id="date", class="form-control", type="text")
+      div(class="form-group row")
+        label(class="col-sm-2 col-form-label") unit
+        div(class="col-sm-4")
+          input(id="unit", class="form-control", type="text")
+      div(class="form-group row")
+        div(class="col-sm-4")
+          button(type="submit", class="btn btn-primary", id="addBtn") Add
+  h1 View
+  table(id="view-table",style="border:1px solid")
+      thead
+        tr
+          th name
+          th reps
+          th weight
+          th date
+          th unit
+          th handle
+        - for(var i = 0; i < exercises.length; i++)
+          tr
+            td= exercises[i].name
+            td= exercises[i].reps
+            td= exercises[i].weight
+            td= exercises[i].date
+            td= exercises[i].unit
+            td 
+              a(href='/update?id=' + exercises[i].id) update 
+              &nbsp;&nbsp;&nbsp;
+              a(href='/delete?id=' + exercises[i].id) delete
+
+  script.
+    $('#addBtn').click(function() {
+      var name = $('#name').val()
+      var reps = $('#reps').val()
+      var weight = $('#weight').val()
+      var date = $('#date').val()
+      var unit = $('#unit').val()
+      $.ajax({
+        url: '/add',
+        type: 'post',
+        data: {
+          name, reps, weight, date, unit
+        },
+        success:function(res) {
+          var htl = '<tr><th>name</th><th>reps</th><th>weight</th><th>date</th><th>unit</th><th>handle</th></tr>'
+          for(var i = 0; i < res.length; i++) {
+            htl += '<tr><td>'+res[i].name+'</td><td>'+res[i].reps+'</td><td>'+res[i].weight+
+            '</td><td>'+res[i].date+'</td><td>'+res[i].unit+'</td><td>'+
+            ' <a href="/update?id='+res[i].id+'">update</a> &nbsp;&nbsp;&nbsp; <a href="/delete?id='
+            +res[i].id+'">delete</a></td></tr>'
+          }
+          $('#view-table').html(htl);
+        }
+      })
+    })
